@@ -1,0 +1,31 @@
+Cocoru Emilia Iuliana 322CA
+
+
+Pentru implementarea routerului mi-am creat o serie de funcții și fișiere .c pentru 
+fiecare tip de acțiune pe care doream să o fac:
+
+->myparser.c: conține structuta tabelei de rutare, precum și funcția de read_rtable, ce 
+are scopul de a prelua datele din fișierul rtable și de a returna numărul de entitați existente.
+
+->arp.c : conține structura header-ului de arp, structura unei entități din tabela de rutare și următoarele funcții:
+		->int add_new_arp = introduce în tabela de arp nouă valoare abia aflată și returnează mărimea tabelei.
+		->int search_mac = returnează poziția în tabelă a mac-ului căutat pentru o anumită adresă ip.
+		->void arp_reply = modifică și retrimite pachetul cu adresa mac cerută de către sursa inițială a pachetului.
+		->void send_pachet_from_queue = dacă există pachete în coadă, în urma unui ARP reply, trimite aceste pachete.
+
+
+->icmp.c: funcția void icmp_pachet = creează un pachet icmp cu toate detaliile necesare, iar type-ul și codul
+		se modifică în funcție de "eroare"/de ce fel de pachet dorim să avem
+		(Destination unreachable, Time exceeded, Echo reply).
+
+->ip.c : void ip_reply = aici se verifică dacă există o cale spre destinație și dacă există adresa 
+		mac pentru a se trimite pachetul. In caz contrar fie se trimite un ICMP (Destination unreachable)
+		sau un ARP REQUEST pentru a se afla adresa mac și a se trimite mai târziu pachetul ce este introdus în coađă.
+
+În router.c am întreaga logică a programului(și anume verificare tip de pachet (ARP, IP), dacă este destinat routerului,
+		dacă ttl-ul, checksum-ul sunt corecte și așa mai departe).
+
+Probleme legate de implementare: suficient de multe erori datorită modificării prost a adreselor sursă/destinație, incercarea
+		apelării a ceva inexistent. Au fost momente când efectiv priveam codul fără să ințeleg ce e greșit, dar cu mult debugging
+		am descoperit sursa celor mai multe problemelor. Am încercat să fac căutare binară pentru tabela de rutare, dar nu înțeleg
+		de ce nu vrea să meargă așa cum trebuie. De asemenea, am folosit funcția de ip_checksum din laborator.
